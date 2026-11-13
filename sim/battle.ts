@@ -1071,6 +1071,7 @@ export class Battle {
 			for (const side of this.sides) {
 				if (shouldBubbleDown) {
 					for (const active of side.active) {
+						if (!active) continue;
 						if (side === target || side === target.allySide) {
 							handlers = handlers.concat(this.findPokemonEventHandlers(active, `on${eventName}`));
 						} else if (prefixedHandlers) {
@@ -2537,7 +2538,7 @@ export class Battle {
 	checkFainted() {
 		for (const side of this.sides) {
 			for (const pokemon of side.active) {
-				if (pokemon.fainted) {
+				if (pokemon && pokemon.fainted) {
 					pokemon.status = 'fnt' as ID;
 					pokemon.switchFlag = true;
 				}
@@ -2842,7 +2843,7 @@ export class Battle {
 		// phazing (Roar, etc)
 		for (const side of this.sides) {
 			for (const pokemon of side.active) {
-				if (pokemon.forceSwitchFlag) {
+				if (pokemon && pokemon.forceSwitchFlag) {
 					if (pokemon.hp) this.actions.dragIn(pokemon.side, pokemon.position);
 					pokemon.forceSwitchFlag = false;
 				}

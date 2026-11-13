@@ -1270,14 +1270,14 @@ export class Side {
 				// auto-pass
 				while (
 					index < this.active.length &&
-					(this.active[index].fainted || this.active[index].volatiles['commanding'])
+					(!this.active[index] || this.active[index].fainted || this.active[index].volatiles['commanding'])
 				) {
 					this.choosePass();
 					index++;
 				}
 				break;
 			case 'switch':
-				while (index < this.active.length && !this.active[index].switchFlag) {
+				while (index < this.active.length && !this.active[index]?.switchFlag) {
 					this.choosePass();
 					index++;
 				}
@@ -1295,7 +1295,7 @@ export class Side {
 
 		switch (this.requestState) {
 		case 'switch':
-			if (pokemon.switchFlag) { // This condition will always happen if called by Battle#choose()
+			if (pokemon?.switchFlag) { // This condition will always happen if called by Battle#choose()
 				if (!this.choice.forcedPassesLeft) {
 					return this.emitChoiceError(`Can't pass: You need to switch in a Pokémon to replace ${pokemon.name}`);
 				}
@@ -1303,9 +1303,7 @@ export class Side {
 			}
 			break;
 		case 'move':
-			if (!pokemon.fainted && !pokemon.volatiles['commanding']) {
-				return this.emitChoiceError(`Can't pass: Your ${pokemon.name} must make a move (or switch)`);
-			}
+			// 经典捕捉投球失败时消耗本回合；空槽位也自动跳过，强制换人仍由上方校验。
 			break;
 		default:
 			return this.emitChoiceError(`Can't pass: Not a move or switch request`);

@@ -450,12 +450,18 @@ export function getPlayerStreams(stream: BattleStream) {
 			}
 		}
 		for (const s of Object.values(streams)) {
-			s.pushEnd();
+			// 会话清理可能已关闭部分输出流，避免重复结束中断其余流的清理。
+			if (!s.atEOF) s.pushEnd();
 		}
 	})().catch(err => {
+		let forwarded = false;
 		for (const s of Object.values(streams)) {
-			s.pushError(err, true);
+			if (s.atEOF) continue;
+			// 派发协程已退出，原始异常必须终止读取，不能留下永远等待的活流。
+			s.pushError(err);
+			forwarded = true;
 		}
+		if (!forwarded) console.error('战斗流异常发生时所有输出流均已关闭', err);
 	});
 	return streams;
 }

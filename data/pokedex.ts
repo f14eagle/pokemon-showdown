@@ -730,6 +730,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.4,
 		weightkg: 6,
 		color: "Yellow",
+		evos: ["Raichu-Alola"],
 		eggGroups: ["Undiscovered"],
 		gen: 7,
 	},

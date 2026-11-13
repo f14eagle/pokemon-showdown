@@ -2172,6 +2172,8 @@ export class Pokemon {
 	isSkyDropped() {
 		if (this.volatiles['skydrop']) return true;
 		for (const foeActive of this.side.foe.active) {
+			// 不足员双打的空槽位没有宝可梦，也不会产生自由落体状态。
+			if (!foeActive) continue;
 			if (foeActive.volatiles['skydrop'] && foeActive.volatiles['skydrop'].source === this) {
 				return true;
 			}
